@@ -1,0 +1,148 @@
+name: Build and push Docker images
+on:
+  push:
+    paths:
+      - '.github/workflows/**'
+      - 'fish/**'
+      - 'versions'
+jobs:
+  build-base-image:
+    name: Build base image
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download previous image for caching
+        run:
+          docker pull andreiborisov/fish:latest || true
+
+      - uses: actions/checkout@v2
+
+      - name: Build fish-base image
+        uses: docker/build-push-action@v1
+        with:
+          repository: cache/fish-base
+          tags: latest
+          path: fish
+          always_pull: true
+          cache_froms: andreiborisov/fish:latest
+          push: false
+
+      - name: Package and save fish-base image
+        run:
+          docker save cache/fish-base:latest -o image.tar
+
+      - name: Upload fish-base image artifact
+        uses: actions/upload-artifact@v1
+        with:
+          name: fish-base
+          path: image.tar
+
+  build-image:
+    name: Build and push fish image
+    needs: build-base-image
+    runs-on: ubuntu-latest
+    env:
+      tag_2_3: '2.3.1'
+      tag_2_4: '2.4.0'
+      tag_2_5: '2.5.0'
+      tag_2_6: '2.6.0'
+      tag_2_7: '2.7.1'
+      tag_2: '2.7.1'
+      tag_3_0: '3.0.2'
+      tag_3_1: '3.1.2'
+      tag_3: '3.1.2'
+      tag_latest: '3.1.2'
+
+    strategy:
+      matrix:
+        fish_version: [
+          '2.3.0',
+          '2.3.1',
+          '2.4.0',
+          '2.5.0',
+          '2.6.0',
+          '2.7.0',
+          '2.7.1',
+          '3.0.0',
+          '3.0.1',
+          '3.0.2',
+          '3.1.0',
+          '3.1.1',
+          '3.1.2'
+        ]
+      fail-fast: false
+    steps:
+      - name: Get variables for fish ${{ matrix.fish_version }} image
+        run: |
+          tags="${{ matrix.fish_version }}"
+          case "${{ matrix.fish_version }}" in
+            "${{ env.tag_2_3 }}")
+              tags="${tags},2.3"
+              ;;&
+            "${{ env.tag_2_4 }}")
+              tags="${tags},2.4"
+              ;;&
+            "${{ env.tag_2_5 }}")
+              tags="${tags},2.5"
+              ;;&
+            "${{ env.tag_2_6 }}")
+              tags="${tags},2.6"
+              ;;&
+            "${{ env.tag_2_7 }}")
+              tags="${tags},2.7"
+              ;;&
+            "${{ env.tag_2 }}")
+              tags="${tags},2"
+              ;;&
+            "${{ env.tag_3_0 }}")
+              tags="${tags},3.0"
+              ;;&
+            "${{ env.tag_3_1 }}")
+              tags="${tags},3.1"
+              ;;&
+            "${{ env.tag_3 }}")
+              tags="${tags},3"
+              ;;&
+            "${{ env.tag_latest }}")
+              tags="${tags},latest"
+              ;;&
+            *)
+              ;;
+          esac
+
+          fish_version_major=$(echo ${{ matrix.fish_version }} | awk -F'.' '{print $1}')
+          build_path="fish/$fish_version_major"
+
+          echo "::set-env name=tags::$tags"
+          echo "::set-env name=build_path::$build_path"
+
+      - name: Download previous image for caching
+        run:
+          docker pull andreiborisov/fish:${{ matrix.fish_version }} || true
+
+      - name: Download fish-base image artifact
+        uses: actions/download-artifact@v1
+        with:
+          name: fish-base
+
+      - name: Unpack fish-base image
+        run:
+          docker load -i fish-base/image.tar
+
+      - uses: actions/checkout@v2
+      
+      - name: Read package versions
+        uses: falti/dotenv-action@v0.2.4
+        id: versions
+        with:
+          path: versions
+
+      - name: Build fish:${{ matrix.fish_version }} image
+        uses: docker/build-push-action@v1
+        with:
+          repository: andreiborisov/fish
+          username: andreiborisov
+          password: ${{ secrets.DOCKER_PASSWORD }}
+          tags: ${{ env.tags }}
+          path: ${{ env.build_path }}
+          build_args: FISH_VERSION=${{ matrix.fish_version }},FISHER_VERSION=${{ steps.versions.outputs.fisher_version }},FISHTAPE_VERSION=${{ steps.versions.outputs.fishtape_version }}
+          cache_froms: andreiborisov/fish:${{ matrix.fish_version }}

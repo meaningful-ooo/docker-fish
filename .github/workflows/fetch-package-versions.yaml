@@ -1,0 +1,33 @@
+name: Fetch latest versions of fish packages
+on:
+  schedule:
+    - cron:  '0 * * * *'
+jobs:
+  fetch-versions:
+    name: Fetch package versions
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+
+      - name: Fetch release versions
+        run: |
+          curl -sL https://api.github.com/repos/jorgebucaran/fisher/releases/latest | \
+          jq -r ".tag_name" | \
+          sed -n -e 's/^/FISHER_VERSION=/p' > versions
+
+          curl -sL https://api.github.com/repos/jorgebucaran/fishtape/releases/latest | \
+          jq -r ".tag_name" | \
+          sed -n -e 's/^/FISHTAPE_VERSION=/p' >> versions
+
+      - name: Check for modified files
+        id: git-check
+        run: echo ::set-output name=modified::$([ -z "`git status --porcelain`" ] && echo "false" || echo "true")
+
+      - name: Commit latest release versions
+        if: steps.git-check.outputs.modified == 'true'
+        run: |
+          git config --global user.name 'GitHub Actions'
+          git commit -am 'Update fish package versions'
+          git push
