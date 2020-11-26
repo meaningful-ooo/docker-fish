@@ -16,14 +16,14 @@ nemo@8cee1f8493c3 ~>
 To invoke `fish` with flags just supply them as arguments:
 
 ```console
-$ docker run -it --rm andreiborisov/fish:2 --version
-fish, version 2.7.1
+$ docker run -it --rm andreiborisov/fish:3.0 --version
+fish, version 3.0.2
 ```
 
 You can also run fish commands directly (without the need to specify `-c` or `--command` fish flag):
 
 ```console
-$ docker run -it --rm andreiborisov/fish:3.0 fisher ls
+$ docker run -it --rm andreiborisov/fish:3 fisher ls
 jourgebucaran/fishtape
 ```
 
@@ -33,7 +33,7 @@ You can use these images to run [Fishtape](https://github.com/jorgebucaran/fisht
 
 ## Supported fish versions
 
-There is an image for each fish version starting from `2.3.0` and also tags for each latest patch, minor and major release. Check out [Docker Hub](https://hub.docker.com/repository/docker/andreiborisov/fish/tags) for the full list of currently available tags.
+There is an image for each fish version starting from `3.0.0` and also tags for each latest patch, minor and major release. Check out [Docker Hub](https://hub.docker.com/repository/docker/andreiborisov/fish/tags) for the full list of currently available tags.
 
 ## What’s included?
 
