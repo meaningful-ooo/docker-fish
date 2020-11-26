@@ -23,8 +23,9 @@ fish, version 3.0.2
 You can also run fish commands directly (without the need to specify `-c` or `--command` fish flag):
 
 ```console
-$ docker run -it --rm andreiborisov/fish:3 fisher ls
-jourgebucaran/fishtape
+$ docker run -it --rm andreiborisov/fish:3 fisher list
+jorgebucaran/fisher
+jorgebucaran/fishtape
 ```
 
 ### Testing fish packages

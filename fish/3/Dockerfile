@@ -35,6 +35,5 @@ WORKDIR /home/nemo
 ARG FISHER_VERSION
 ARG FISHTAPE_VERSION
 
-RUN curl https://raw.githubusercontent.com/jorgebucaran/fisher/main/fisher.fish \
-    --create-dirs -sLo /home/nemo/.config/fish/functions/fisher.fish \
-  && fish -c "fisher add jorgebucaran/fishtape"
+RUN fish -c "curl -sL git.io/fisher | source && fisher install jorgebucaran/fisher" \
+  && fish -c "fisher install jorgebucaran/fishtape"
