@@ -81,8 +81,8 @@ jobs:
           fish_version_major=$(echo ${{ matrix.fish_version }} | awk -F'.' '{print $1}')
           build_path="fish/$fish_version_major"
 
-          echo "::set-env name=tags::$tags"
-          echo "::set-env name=build_path::$build_path"
+          echo "tags=$tags" >> $GITHUB_ENV
+          echo "build_path=$build_path" >> $GITHUB_ENV
 
       - name: Download previous image for caching
         run:
