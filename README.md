@@ -30,7 +30,7 @@ jorgebucaran/fishtape
 
 ### Testing fish packages
 
-You can use these images to run [Fishtape](https://github.com/jorgebucaran/fishtape) tests on multiple fish versions. Check out [fish-package template repo](https://github.com/andreiborisov/fish-package) for the full example on how to do that.
+You can use these images to run [Fishtape](https://github.com/jorgebucaran/fishtape) tests on multiple fish versions. Check out [fish-plugin template repo](https://github.com/andreiborisov/fish-plugin) for the full example on how to do that.
 
 ## Supported fish versions
 
