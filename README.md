@@ -1,4 +1,4 @@
-# docker-fish [![Docker pulls](https://img.shields.io/docker/pulls/andreiborisov/fish.svg?logo=docker&label=pulls&color=2396ed)](https://hub.docker.com/repository/docker/andreiborisov/fish)
+# docker-fish [![Docker pulls](https://img.shields.io/docker/pulls/andreiborisov/fish.svg?logo=docker&label=pulls&color=2396ed)](https://hub.docker.com/r/andreiborisov/fish)
 
 > Dockerfiles for running various versions of the [fish shell](https://fishshell.com)
 
