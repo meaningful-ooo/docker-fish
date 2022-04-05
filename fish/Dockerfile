@@ -1,4 +1,4 @@
-FROM alpine:3.12.3
+FROM alpine:3.15.4
 
 # Common runtime dependencies of the fish shell
 RUN apk add --no-cache \
